@@ -2,7 +2,7 @@
 
 Format mix: mostly Top 10 rankings, with a "versus" or "myths vs facts" episode every 4th video.
 
-- [x] strongest-animals — 10 Strongest Animals on Earth (Pound for Pound) — long 2026-11-27 20:15; short gorilla 2026-11-28 18:00
+- [x] strongest-animals — 10 Strongest Animals on Earth (Pound for Pound) — long 2026-11-27 20:15; shorts: gorilla 2026-11-28 18:00, dung beetle 2026-11-29 18:00, mite 2026-11-30 12:00
 - [ ] strongest-bites — 10 Strongest Bites in the Animal Kingdom (bite force studies)
 - [ ] smartest-animals — 10 Smartest Animals on Earth
 - [ ] fastest-animals — 10 Fastest Animals on Land, Sea and Air
