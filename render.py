@@ -26,6 +26,7 @@ DEFAULT_VOICE = "JBFqnCBsd6RMkjVDRZzb"  # ElevenLabs premade narrator voice
 DENY_TAGS = {"3d", "animation", "cartoon", "render", "cgi", "ai generated", "illustration", "anime", "toy"}
 EL_KEY = os.environ["ELEVENLABS_API_KEY"]
 PX_KEY = os.environ["PIXABAY_API_KEY"]
+SLUG = None
 
 
 def run(cmd):
@@ -61,9 +62,23 @@ def pick_voice(job):
     return vid
 
 
-def tts(text, voice, path):
+REPO_RELEASES = "https://github.com/wildranktv-dev/wildrank-pipeline/releases/download"
+
+
+def tts(text, voice, path, slug=None):
+    """Generate narration, reusing audio already stored in the job's release (saves credits on re-renders)."""
+    import hashlib
     if path.exists():
         return
+    key = hashlib.md5(f"{voice}|{text}".encode()).hexdigest()[:16]
+    cached = path.with_name(f"tts_{key}.mp3")
+    if slug:
+        r = requests.get(f"{REPO_RELEASES}/{slug}/{cached.name}", timeout=60)
+        if r.ok and len(r.content) > 1000:
+            path.write_bytes(r.content)
+            cached.write_bytes(r.content)
+            print(f"reused narration {cached.name}")
+            return
     r = request_retry(
         "POST",
         f"https://api.elevenlabs.io/v1/text-to-speech/{voice}?output_format=mp3_44100_128",
@@ -73,6 +88,7 @@ def tts(text, voice, path):
     if not r.ok:
         raise RuntimeError(f"ElevenLabs error {r.status_code}: {r.text[:300]}")
     path.write_bytes(r.content)
+    cached.write_bytes(r.content)
 
 
 # ---------- footage ----------
@@ -137,7 +153,7 @@ def esc(s):
 
 def build_segment(seg, idx, voice, work):
     audio = work / f"a{idx:02d}.mp3"
-    tts(seg["text"], voice, audio)
+    tts(seg["text"], voice, audio, SLUG)
     adur = duration(audio)
     vdur = adur + 0.6
     clips, illustrative = get_clips(seg, work, vdur)
@@ -233,7 +249,9 @@ def make_thumb(src_video, text_lines, out):
 
 def main(job_path):
     job = json.loads(Path(job_path).read_text())
+    global SLUG
     slug = job["slug"]
+    SLUG = slug
     out_dir = Path("out") / slug
     work = Path("work") / slug
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -267,6 +285,8 @@ def main(job_path):
     make_thumb(thumb_src, job["thumbnail_text"], thumb)
     files.append(thumb.name)
 
+    for f in work.glob("tts_*.mp3"):
+        (out_dir / f.name).write_bytes(f.read_bytes())
     manifest = {"slug": slug, "duration": duration(final), "files": files, "credits": credits,
                 "chars": sum(len(s["text"]) for s in segments)}
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
