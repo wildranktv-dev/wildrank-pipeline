@@ -196,9 +196,11 @@ def build_segment(seg, idx, voice, work):
 
 def make_short(seg_file, raw_file, seg, out):
     d = min(duration(seg_file), 58.0)
-    top = esc(f"#{seg['rank']} {seg['name'].upper()}")
+    label = f"#{seg['rank']} {seg['name'].upper()}"
+    fs = 78 if len(label) <= 16 else max(44, int(78 * 16 / len(label)))
+    top = esc(label)
     vf = (f"crop=ih*9/16:ih,scale=1080:1920,setsar=1,"
-          f"drawtext=fontfile={FONT}:text='{top}':fontsize=78:fontcolor=white:box=1:boxcolor=black@0.6:"
+          f"drawtext=fontfile={FONT}:text='{top}':fontsize={fs}:fontcolor=white:box=1:boxcolor=black@0.6:"
           f"boxborderw=26:x=(w-tw)/2:y=220,"
           f"drawtext=fontfile={FONT}:text='Full ranking on Wild Rank':fontsize=46:fontcolor=#FFD23F:"
           f"box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
