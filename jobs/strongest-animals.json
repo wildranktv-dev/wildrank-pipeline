@@ -18,11 +18,13 @@
       "text": "When we think of strength, we picture elephants, bears and gorillas. But strength is relative. If you compare how much an animal can lift, pull or crush against its own body weight, the ranking flips upside down, and some of the champions are smaller than a grain of rice. Today we are ranking the ten strongest animals on Earth, pound for pound. Stay until number one, because the winner is an animal most people have never even heard of.",
       "queries": [
         "wild animals",
-        "wildlife animal"
+        "wildlife"
       ],
       "must": [
         "animal",
         "wildlife",
+        "wild animal",
+        "wild animals",
         "safari"
       ]
     },
@@ -35,15 +37,19 @@
         "tiger"
       ],
       "must": [
-        "tiger"
+        "tiger",
+        "tigers",
+        "bengal tiger",
+        "siberian tiger"
       ],
       "fallback": [
         "big cat"
       ],
       "fallback_must": [
-        "cat",
+        "big cat",
         "lion",
-        "leopard"
+        "leopard",
+        "jaguar"
       ]
     },
     {
@@ -55,7 +61,9 @@
         "gorilla"
       ],
       "must": [
-        "gorilla"
+        "gorilla",
+        "gorillas",
+        "silverback"
       ]
     },
     {
@@ -68,7 +76,9 @@
         "elephant"
       ],
       "must": [
-        "elephant"
+        "elephant",
+        "elephants",
+        "african elephant"
       ]
     },
     {
@@ -80,13 +90,19 @@
         "harpy eagle"
       ],
       "must": [
+        "harpy eagle",
         "harpy"
       ],
       "fallback": [
-        "eagle"
+        "eagle",
+        "golden eagle"
       ],
       "fallback_must": [
-        "eagle"
+        "eagle",
+        "bald eagle",
+        "golden eagle",
+        "sea eagle",
+        "eagles"
       ]
     },
     {
@@ -99,16 +115,24 @@
         "leaf cutter ant"
       ],
       "must": [
-        "leafcutter",
-        "leaf cutter",
-        "leaf-cutter"
+        "leafcutter ant",
+        "leaf cutter ant",
+        "leafcutter ants",
+        "leaf-cutter ant",
+        "leafcutter"
       ],
       "fallback": [
-        "ant",
-        "ants"
+        "ants",
+        "ant"
       ],
       "fallback_must": [
-        "ant"
+        "ant",
+        "ants",
+        "black ants",
+        "red ant",
+        "wood ant",
+        "red ants",
+        "black ant"
       ]
     },
     {
@@ -120,14 +144,21 @@
         "weaver ant"
       ],
       "must": [
-        "weaver"
+        "weaver ant",
+        "weaver ants"
       ],
       "fallback": [
         "ant macro",
         "ants"
       ],
       "fallback_must": [
-        "ant"
+        "ant",
+        "ants",
+        "black ants",
+        "red ant",
+        "wood ant",
+        "red ants",
+        "black ant"
       ]
     },
     {
@@ -139,14 +170,18 @@
         "coconut crab"
       ],
       "must": [
-        "coconut crab",
-        "birgus"
+        "coconut crab"
       ],
       "fallback": [
-        "crab"
+        "crab",
+        "crab beach"
       ],
       "fallback_must": [
-        "crab"
+        "crab",
+        "crabs",
+        "red crab",
+        "ghost crab",
+        "sand crab"
       ]
     },
     {
@@ -159,15 +194,19 @@
         "hercules beetle"
       ],
       "must": [
-        "rhinoceros",
-        "hercules",
-        "rhino"
+        "rhinoceros beetle",
+        "hercules beetle",
+        "rhino beetle"
       ],
       "fallback": [
         "beetle"
       ],
       "fallback_must": [
-        "beetle"
+        "beetle",
+        "beetles",
+        "stag beetle",
+        "scarab",
+        "scarab beetle"
       ]
     },
     {
@@ -179,13 +218,18 @@
         "dung beetle"
       ],
       "must": [
-        "dung"
+        "dung beetle",
+        "dung beetles"
       ],
       "fallback": [
         "beetle"
       ],
       "fallback_must": [
-        "beetle"
+        "beetle",
+        "beetles",
+        "stag beetle",
+        "scarab",
+        "scarab beetle"
       ]
     },
     {
@@ -194,19 +238,22 @@
       "stat": "Holds 1,180x its body weight",
       "text": "And number one: the oribatid mite. This tiny creature, smaller than a millimeter, lives in soil and moss all over the world, so small that you have almost certainly walked past millions of them. In 2007, researchers glued tiny weights to one species and found it could hold about one thousand one hundred and eighty times its own body weight. Relative to its size, it is one of the strongest animals ever measured. Proof that in nature, size is not everything.",
       "queries": [
-        "mite"
+        "mite",
+        "moss macro"
       ],
       "must": [
-        "mite"
+        "mite",
+        "mites",
+        "oribatid mite"
       ],
       "fallback": [
         "moss macro",
-        "insect macro"
+        "moss"
       ],
       "fallback_must": [
         "moss",
         "macro",
-        "insect"
+        "forest floor"
       ]
     },
     {
@@ -214,11 +261,13 @@
       "text": "Which one surprised you the most? Let us know in the comments. If you enjoyed this ranking, subscribe to Wild Rank, because next time we are ranking the most dangerous bites in the animal kingdom, and number one might not be the animal you expect.",
       "queries": [
         "wild animals",
-        "wildlife animal"
+        "wildlife"
       ],
       "must": [
         "animal",
         "wildlife",
+        "wild animal",
+        "wild animals",
         "safari"
       ]
     }

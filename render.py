@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 W, H, FPS = 1920, 1080, 30
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 DEFAULT_VOICE = "JBFqnCBsd6RMkjVDRZzb"  # ElevenLabs premade narrator voice
+DENY_TAGS = {"3d", "animation", "cartoon", "render", "cgi", "ai generated", "illustration", "anime", "toy"}
 EL_KEY = os.environ["ELEVENLABS_API_KEY"]
 PX_KEY = os.environ["PIXABAY_API_KEY"]
 
@@ -87,8 +88,11 @@ def search_clips(query, must=None, n=8):
     for h in r.json().get("hits", []):
         if h["id"] in used_ids:
             continue
-        tags = [t.strip().lower() for t in h.get("tags", "").split(",")]
-        if must and not any(any(m in t for t in tags) for m in must):
+        tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
+        if any(t in DENY_TAGS for t in tags):
+            continue
+        # the subject must be one of the first 3 tags, matched exactly
+        if must and not any(t in must for t in tags[:3]):
             continue
         v = h["videos"].get("large") or {}
         if not v.get("url") or v.get("width", 0) < 1280:
