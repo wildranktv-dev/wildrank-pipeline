@@ -191,10 +191,10 @@ def build_segment(seg, idx, voice, work):
          "-map", "[v]", "-map", "[a]", "-t", f"{vdur:.3f}",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(seg_out)])
-    return seg_out, raw
+    return seg_out, raw, illustrative
 
 
-def make_short(seg_file, raw_file, seg, out):
+def make_short(seg_file, raw_file, seg, out, illustrative=False):
     d = min(duration(seg_file), 58.0)
     label = f"#{seg['rank']} {seg['name'].upper()}"
     fs = 78 if len(label) <= 16 else max(44, int(78 * 16 / len(label)))
@@ -204,6 +204,9 @@ def make_short(seg_file, raw_file, seg, out):
           f"boxborderw=26:x=(w-tw)/2:y=220,"
           f"drawtext=fontfile={FONT}:text='Full ranking on Wild Rank':fontsize=46:fontcolor=#FFD23F:"
           f"box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
+    if illustrative:
+        vf += (f",drawtext=fontfile={FONT}:text='Illustrative footage':fontsize=30:fontcolor=white@0.85:"
+               f"box=1:boxcolor=black@0.4:boxborderw=10:x=(w-tw)/2:y=h-260")
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_file), "-i", str(seg_file), "-t", f"{d:.3f}",
          "-map", "0:v", "-map", "1:a", "-vf", vf,
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
@@ -238,9 +241,10 @@ def main(job_path):
     voice = pick_voice(job)
 
     segments = job["segments"]
-    seg_files, raw_files = [], []
+    seg_files, raw_files, illus_flags = [], [], []
     for i, seg in enumerate(segments):
-        out, raw = build_segment(seg, i, voice, work)
+        out, raw, illus = build_segment(seg, i, voice, work)
+        illus_flags.append(illus)
         seg_files.append(out)
         raw_files.append(raw)
 
@@ -255,7 +259,7 @@ def main(job_path):
     for n, rank in enumerate(job.get("shorts", []), 1):
         i = next(k for k, s in enumerate(segments) if s.get("rank") == rank)
         sp = out_dir / f"{slug}_short_{n}.mp4"
-        make_short(seg_files[i], raw_files[i], segments[i], sp)
+        make_short(seg_files[i], raw_files[i], segments[i], sp, illus_flags[i])
         files.append(sp.name)
 
     thumb_src = raw_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
