@@ -26,7 +26,8 @@
         "wild animal",
         "wild animals",
         "safari"
-      ]
+      ],
+      "text_pt": "Quando pensamos em força, imaginamos elefantes, ursos e gorilas. Mas a força é relativa. Se você comparar quanto um animal consegue levantar, puxar ou esmagar em relação ao próprio peso, o ranking vira de cabeça para baixo, e alguns dos campeões são menores que um grão de arroz. Hoje vamos ranquear os dez animais mais fortes da Terra, proporcionalmente ao peso. Fique até o número um, porque o vencedor é um animal de que a maioria das pessoas nunca ouviu falar."
     },
     {
       "rank": 10,
@@ -50,7 +51,8 @@
         "lion",
         "leopard",
         "jaguar"
-      ]
+      ],
+      "text_pt": "Número dez: o tigre. O maior felino do planeta é construído como uma mola. As patas dianteiras e os ombros são cheios de músculos, o que permite derrubar presas como cervos e bois selvagens. Depois de abater a presa, o tigre muitas vezes arrasta a carcaça para um esconderijo, e essa presa pode pesar mais do que o próprio tigre. Em força bruta, poucos predadores terrestres chegam perto. Mas, proporcionalmente ao peso, o tigre está só começando nesta lista."
     },
     {
       "rank": 9,
@@ -64,7 +66,8 @@
         "gorilla",
         "gorillas",
         "silverback"
-      ]
+      ],
+      "text_pt": "Número nove: o gorila. Um macho adulto de dorso prateado pode pesar cerca de duas vezes mais que um homem adulto, e quase tudo isso é músculo. As estimativas de quão forte o gorila é variam muito, e muitos números que viralizam são exagerados, mas os cientistas concordam que ele é várias vezes mais forte que um ser humano. Ele parte bambus grossos e arranca vegetação com facilidade. Apesar de todo esse poder, os gorilas são, em geral, comedores de plantas calmos e tranquilos."
     },
     {
       "rank": 8,
@@ -79,7 +82,8 @@
         "elephant",
         "elephants",
         "african elephant"
-      ]
+      ],
+      "text_pt": "Número oito: o elefante. O elefante-africano é o maior animal terrestre vivo. A tromba não tem nenhum osso, mas é controlada por dezenas de milhares de unidades musculares, o que lhe dá força e precisão. Com a tromba, o elefante levanta cargas de centenas de quilos, derruba árvores e carrega troncos, e a mesma tromba consegue pegar um único amendoim. Em força total, ele vence tudo em terra. Proporcionalmente ao peso, porém, animais menores estão prestes a assumir o controle."
     },
     {
       "rank": 7,
@@ -103,7 +107,8 @@
         "golden eagle",
         "sea eagle",
         "eagles"
-      ]
+      ],
+      "text_pt": "Número sete: a harpia. Vivendo nas florestas tropicais da América Central e do Sul, ela caça macacos e preguiças que arranca direto da copa das árvores. Suas garras traseiras podem ser mais longas que as garras de um urso-pardo, e sua pegada está entre as mais fortes de todas as aves. Levantar uma presa pesada que se debate e sair voando com ela exige uma força enorme para um animal que pesa menos que um gato doméstico."
     },
     {
       "rank": 6,
@@ -133,7 +138,8 @@
         "wood ant",
         "red ants",
         "black ant"
-      ]
+      ],
+      "text_pt": "Número seis: a formiga-cortadeira. Essas formigas cortam pedaços de folhas e os carregam de volta ao ninho, muitas vezes por longas distâncias, em colunas de milhares. Cada operária carrega um fragmento várias vezes mais pesado que o próprio corpo, e faz isso o dia inteiro. As folhas não são o alimento direto das formigas. Elas as usam para cultivar uma horta de fungos, que é o que a colônia realmente come. Resistência e força combinadas."
     },
     {
       "rank": 5,
@@ -159,7 +165,8 @@
         "wood ant",
         "red ants",
         "black ant"
-      ]
+      ],
+      "text_pt": "Número cinco: a formiga-tecelã asiática. As formigas-tecelãs constroem ninhos puxando folhas umas contra as outras e colando-as com seda, formando correntes vivas com o próprio corpo. A pegada delas é extraordinária. Uma foto famosa mostra uma formiga-tecelã pendurada de cabeça para baixo numa superfície lisa, segurando um objeto cerca de cem vezes mais pesado que ela. Imagine uma pessoa pendurada no teto pelas mãos segurando um caminhão pequeno."
     },
     {
       "rank": 4,
@@ -182,7 +189,8 @@
         "red crab",
         "ghost crab",
         "sand crab"
-      ]
+      ],
+      "text_pt": "Número quatro: o caranguejo-dos-coqueiros, o maior invertebrado terrestre do mundo. Como o nome sugere, ele consegue abrir cocos. Em 2016, pesquisadores japoneses mediram suas pinças e encontraram uma força de pinçamento de mais de três mil newtons. Isso é mais forte que a pegada de quase todos os outros animais que eles compararam, e rivaliza com a mordida de alguns grandes predadores. Todo esse poder vem de um animal que pesa só alguns quilos."
     },
     {
       "rank": 3,
@@ -207,7 +215,8 @@
         "stag beetle",
         "scarab",
         "scarab beetle"
-      ]
+      ],
+      "text_pt": "Número três: o besouro-rinoceronte. Seu nome vem do chifre na cabeça dos machos, que eles usam para lutar com rivais. A força deles já foi testada em laboratório. Em um estudo, besouros-rinocerontes andaram carregando até trinta vezes o próprio peso e conseguiram sustentar cargas de cerca de cem vezes o seu peso. Para um ser humano, isso seria como segurar o peso de vários carros."
     },
     {
       "rank": 2,
@@ -230,7 +239,8 @@
         "stag beetle",
         "scarab",
         "scarab beetle"
-      ]
+      ],
+      "text_pt": "Número dois: o besouro-rola-bosta com chifres. Esses pequenos besouros vivem em túneis sob montes de esterco, onde os machos lutam para manter os rivais longe. Em um estudo de 2004, cientistas mediram com quanta força um macho conseguia puxar, e o resultado foi impressionante: mil cento e quarenta e uma vezes o próprio peso. Para uma pessoa comum, seria como puxar seis ônibus de dois andares cheios de gente. Durante anos, ele foi considerado o inseto mais forte do planeta."
     },
     {
       "rank": 1,
@@ -254,7 +264,8 @@
         "moss",
         "macro",
         "forest floor"
-      ]
+      ],
+      "text_pt": "E o número um: o ácaro oribatídeo. Essa criatura minúscula, menor que um milímetro, vive no solo e no musgo do mundo inteiro, tão pequena que você quase certamente já passou por milhões delas. Em 2007, pesquisadores colaram pesinhos minúsculos em uma espécie e descobriram que ela conseguia segurar cerca de mil cento e oitenta vezes o próprio peso. Em relação ao tamanho, é um dos animais mais fortes já medidos. A prova de que, na natureza, tamanho não é tudo."
     },
     {
       "overlay": "SUBSCRIBE FOR MORE RANKINGS",
@@ -269,7 +280,8 @@
         "wild animal",
         "wild animals",
         "safari"
-      ]
+      ],
+      "text_pt": "Qual deles mais te surpreendeu? Conta pra gente nos comentários. Se você curtiu este ranking, inscreva-se no Wild Rank, porque no próximo vamos ranquear as mordidas mais fortes do reino animal, e o número um pode não ser o animal que você espera."
     }
   ],
   "description": "Strength is relative. When you compare power to body weight, the ranking of the strongest animals on Earth flips upside down. From tigers and elephants to beetles and a mite smaller than a millimeter, here are the 10 strongest animals pound for pound.\n\n0:00 Intro\n#10 Tiger\n#9 Gorilla\n#8 Elephant\n#7 Harpy Eagle\n#6 Leafcutter Ant\n#5 Weaver Ant\n#4 Coconut Crab\n#3 Rhinoceros Beetle\n#2 Horned Dung Beetle\n#1 Oribatid Mite\n\nStudies mentioned: Oka et al. 2016 (coconut crab pinch force), Kram 1996 (rhinoceros beetle load carrying), Knell & Allen 2004 (dung beetle strength), Heethoff & Koerner 2007 (oribatid mite strength).\n\nFootage: Pixabay (some shots are illustrative where footage of the exact species was unavailable). Narration: AI voice.\n\n#animals #wildlife #top10",
@@ -284,5 +296,5 @@
     "coconut crab",
     "animal ranking"
   ],
-  "rev": 5
+  "rev": 6
 }

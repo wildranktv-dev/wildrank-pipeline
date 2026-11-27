@@ -207,7 +207,52 @@ def build_segment(seg, idx, voice, work):
          "-map", "[v]", "-map", "[a]", "-t", f"{vdur:.3f}",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(seg_out)])
-    return seg_out, raw, illustrative
+    return seg_out, raw, illustrative, adur
+
+
+# ---------- subtitles ----------
+def _chunks(text, maxlen=84):
+    import re
+    sents = re.split(r"(?<=[.!?])\s+", text.strip())
+    out = []
+    for snt in sents:
+        words, cur = snt.split(), ""
+        for w in words:
+            if len(cur) + len(w) + 1 > maxlen and cur:
+                out.append(cur)
+                cur = w
+            else:
+                cur = f"{cur} {w}".strip()
+        if cur:
+            out.append(cur)
+    return out
+
+
+def _ts(t):
+    h, rem = divmod(t, 3600)
+    m, sec = divmod(rem, 60)
+    return f"{int(h):02d}:{int(m):02d}:{int(sec):02d},{int(round((sec % 1) * 1000)) % 1000:03d}"
+
+
+def write_srt(segments, timings, field, path):
+    """timings: list of (start, audio_duration) per segment. Text chunks are spread by length over the narration."""
+    lines, n = [], 1
+    for seg, (start, adur) in zip(segments, timings):
+        text = seg.get(field)
+        if not text:
+            continue
+        parts = _chunks(text)
+        total = sum(len(p) for p in parts) or 1
+        t = start + 0.2
+        for p in parts:
+            d = adur * len(p) / total
+            if len(p) > 42:
+                cut = p.rfind(" ", 0, len(p) // 2 + 6)
+                p = p[:cut] + "\n" + p[cut + 1:]
+            lines.append(f"{n}\n{_ts(t)} --> {_ts(t + d - 0.05)}\n{p}\n")
+            n += 1
+            t += d
+    path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def make_short(seg_file, raw_file, seg, out, illustrative=False):
@@ -259,9 +304,10 @@ def main(job_path):
     voice = pick_voice(job)
 
     segments = job["segments"]
-    seg_files, raw_files, illus_flags = [], [], []
+    seg_files, raw_files, illus_flags, audio_durs = [], [], [], []
     for i, seg in enumerate(segments):
-        out, raw, illus = build_segment(seg, i, voice, work)
+        out, raw, illus, adur = build_segment(seg, i, voice, work)
+        audio_durs.append(adur)
         illus_flags.append(illus)
         seg_files.append(out)
         raw_files.append(raw)
@@ -274,6 +320,15 @@ def main(job_path):
          "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(final)])
 
     files = [final.name]
+    timings, t0 = [], 0.0
+    for sf, ad in zip(seg_files, audio_durs):
+        timings.append((t0, ad))
+        t0 += duration(sf)
+    for field, lang in (("text", "en"), ("text_pt", "pt")):
+        if any(sg.get(field) for sg in segments):
+            sp = out_dir / f"{slug}_{lang}.srt"
+            write_srt(segments, timings, field, sp)
+            files.append(sp.name)
     for n, rank in enumerate(job.get("shorts", []), 1):
         i = next(k for k, s in enumerate(segments) if s.get("rank") == rank)
         sp = out_dir / f"{slug}_short_{n}.mp4"
