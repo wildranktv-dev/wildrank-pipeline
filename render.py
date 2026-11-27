@@ -194,7 +194,7 @@ def build_segment(seg, idx, voice, work):
     return seg_out, raw
 
 
-def make_short(seg_file, seg, out):
+def make_short(seg_file, raw_file, seg, out):
     d = min(duration(seg_file), 58.0)
     top = esc(f"#{seg['rank']} {seg['name'].upper()}")
     vf = (f"crop=ih*9/16:ih,scale=1080:1920,setsar=1,"
@@ -202,7 +202,8 @@ def make_short(seg_file, seg, out):
           f"boxborderw=26:x=(w-tw)/2:y=220,"
           f"drawtext=fontfile={FONT}:text='Full ranking on Wild Rank':fontsize=46:fontcolor=#FFD23F:"
           f"box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
-    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(seg_file), "-t", f"{d:.3f}", "-vf", vf,
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_file), "-i", str(seg_file), "-t", f"{d:.3f}",
+         "-map", "0:v", "-map", "1:a", "-vf", vf,
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "160k", str(out)])
 
@@ -252,7 +253,7 @@ def main(job_path):
     for n, rank in enumerate(job.get("shorts", []), 1):
         i = next(k for k, s in enumerate(segments) if s.get("rank") == rank)
         sp = out_dir / f"{slug}_short_{n}.mp4"
-        make_short(seg_files[i], segments[i], sp)
+        make_short(seg_files[i], raw_files[i], segments[i], sp)
         files.append(sp.name)
 
     thumb_src = raw_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
