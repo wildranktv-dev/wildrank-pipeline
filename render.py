@@ -79,13 +79,16 @@ used_ids = set()
 credits = []
 
 
-def search_clips(query, n=8):
+def search_clips(query, must=None, n=8):
     r = request_retry("GET", "https://pixabay.com/api/videos/", params={
         "key": PX_KEY, "q": query, "per_page": 30, "safesearch": "true", "order": "popular"})
     r.raise_for_status()
     hits = []
     for h in r.json().get("hits", []):
         if h["id"] in used_ids:
+            continue
+        tags = [t.strip().lower() for t in h.get("tags", "").split(",")]
+        if must and not any(any(m in t for t in tags) for m in must):
             continue
         v = h["videos"].get("large") or {}
         if not v.get("url") or v.get("width", 0) < 1280:
@@ -96,30 +99,31 @@ def search_clips(query, n=8):
     return hits[:n]
 
 
-def get_clips(queries, workdir, need_seconds):
-    """Download landscape clips for the first query that returns results, falling back to the next."""
-    files = []
-    total = 0.0
-    for q in queries:
-        for h, v in search_clips(q):
-            p = workdir / f"px_{h['id']}.mp4"
-            if not p.exists():
-                rr = request_retry("GET", v["url"])
-                if not rr.ok:
-                    continue
-                p.write_bytes(rr.content)
-            used_ids.add(h["id"])
-            credits.append({"id": h["id"], "user": h.get("user"), "page": h.get("pageURL"), "query": q})
-            d = min(duration(p), 6.0)
-            files.append((p, d))
-            total += d
-            if total >= need_seconds:
-                return files
-        if files:
-            break
-    if not files:
-        raise RuntimeError(f"no footage for {queries}")
-    return files
+def get_clips(seg, workdir, need_seconds):
+    """Return (clips, illustrative). Specific queries must match `must` tags; otherwise use fallback queries."""
+    plans = [(q, seg.get("must")) for q in seg["queries"]]
+    fallback = [(q, seg.get("fallback_must")) for q in seg.get("fallback", [])]
+    for group, illustrative in ((plans, False), (fallback, True)):
+        files, total = [], 0.0
+        for q, must in group:
+            for h, v in search_clips(q, must):
+                p = workdir / f"px_{h['id']}.mp4"
+                if not p.exists():
+                    rr = request_retry("GET", v["url"])
+                    if not rr.ok:
+                        continue
+                    p.write_bytes(rr.content)
+                used_ids.add(h["id"])
+                credits.append({"id": h["id"], "user": h.get("user"), "page": h.get("pageURL"), "query": q,
+                                "tags": h.get("tags")})
+                d = min(duration(p), 6.0)
+                files.append((p, d))
+                total += d
+                if total >= need_seconds:
+                    return files, illustrative
+        if len(files) >= 2:
+            return files, illustrative
+    raise RuntimeError(f"no footage for {seg.get('name') or seg.get('overlay')}")
 
 
 # ---------- video building ----------
@@ -132,7 +136,7 @@ def build_segment(seg, idx, voice, work):
     tts(seg["text"], voice, audio)
     adur = duration(audio)
     vdur = adur + 0.6
-    clips = get_clips(seg["queries"], work, vdur)
+    clips, illustrative = get_clips(seg, work, vdur)
 
     # normalise clips and loop through them until vdur is covered
     parts, t, k = [], 0.0, 0
@@ -173,6 +177,9 @@ def build_segment(seg, idx, voice, work):
         filters.append(
             f"drawtext=fontfile={FONT}:text='{esc(seg['overlay'])}':fontsize=96:fontcolor=white:"
             f"borderw=8:bordercolor=black@0.7:x=(w-tw)/2:y=(h-th)/2:enable='lt(t,4)'")
+    if illustrative:
+        filters.append(f"drawtext=fontfile={FONT}:text='Illustrative footage':fontsize=28:fontcolor=white@0.85:"
+                       f"box=1:boxcolor=black@0.4:boxborderw=10:x=w-tw-40:y=h-th-40")
     filters.append("drawtext=fontfile=" + FONT + ":text='WILD RANK':fontsize=34:fontcolor=white@0.8:x=w-tw-40:y=36")
     seg_out = work / f"seg{idx:02d}.mp4"
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-i", str(audio),
@@ -180,7 +187,7 @@ def build_segment(seg, idx, voice, work):
          "-map", "[v]", "-map", "[a]", "-t", f"{vdur:.3f}",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(seg_out)])
-    return seg_out
+    return seg_out, raw
 
 
 def make_short(seg_file, seg, out):
@@ -224,9 +231,11 @@ def main(job_path):
     voice = pick_voice(job)
 
     segments = job["segments"]
-    seg_files = []
+    seg_files, raw_files = [], []
     for i, seg in enumerate(segments):
-        seg_files.append(build_segment(seg, i, voice, work))
+        out, raw = build_segment(seg, i, voice, work)
+        seg_files.append(out)
+        raw_files.append(raw)
 
     lst = work / "final.txt"
     lst.write_text("".join(f"file '{p.name}'\n" for p in seg_files))
@@ -242,7 +251,7 @@ def main(job_path):
         make_short(seg_files[i], segments[i], sp)
         files.append(sp.name)
 
-    thumb_src = seg_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
+    thumb_src = raw_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
     thumb = out_dir / f"{slug}_thumb.jpg"
     make_thumb(thumb_src, job["thumbnail_text"], thumb)
     files.append(thumb.name)
