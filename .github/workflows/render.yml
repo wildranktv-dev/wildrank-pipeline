@@ -1,0 +1,68 @@
+name: render
+
+on:
+  push:
+    paths:
+      - "jobs/**.json"
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Path of the job file, e.g. jobs/strongest-animals.json"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          pip install -q requests pillow
+
+      - name: Find jobs
+        id: jobs
+        run: |
+          if [ -n "${{ github.event.inputs.job }}" ]; then
+            list="${{ github.event.inputs.job }}"
+          else
+            list=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- jobs/ | grep '\.json$' | tr '\n' ' ')
+          fi
+          echo "list=$list" >> "$GITHUB_OUTPUT"
+          echo "Jobs: $list"
+
+      - name: Render
+        if: steps.jobs.outputs.list != ''
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+        run: |
+          for j in ${{ steps.jobs.outputs.list }}; do
+            python render.py "$j"
+          done
+
+      - name: Publish release assets
+        if: steps.jobs.outputs.list != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for j in ${{ steps.jobs.outputs.list }}; do
+            slug=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['slug'])" "$j")
+            if gh release view "$slug" >/dev/null 2>&1; then
+              gh release upload "$slug" out/$slug/* --clobber
+            else
+              gh release create "$slug" out/$slug/* --title "$slug" --notes "Rendered by pipeline"
+            fi
+          done

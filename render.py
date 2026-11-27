@@ -1,0 +1,257 @@
+#!/usr/bin/env python3
+"""Wild Rank renderer.
+
+Reads a job JSON (jobs/<slug>.json) and produces in out/<slug>/:
+  - <slug>.mp4            long-form 1920x1080 video
+  - <slug>_thumb.jpg      1280x720 thumbnail
+  - <slug>_short_<n>.mp4  vertical 1080x1920 Shorts (one per item listed in job["shorts"])
+  - manifest.json         durations, footage credits, file list
+
+Needs env: ELEVENLABS_API_KEY, PIXABAY_API_KEY. Needs ffmpeg/ffprobe on PATH.
+"""
+import json
+import os
+import random
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import requests
+from PIL import Image, ImageDraw, ImageEnhance, ImageFont
+
+W, H, FPS = 1920, 1080, 30
+FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+DEFAULT_VOICE = "JBFqnCBsd6RMkjVDRZzb"  # ElevenLabs premade narrator voice
+EL_KEY = os.environ["ELEVENLABS_API_KEY"]
+PX_KEY = os.environ["PIXABAY_API_KEY"]
+
+
+def run(cmd):
+    print("+", " ".join(str(c) for c in cmd)[:300], flush=True)
+    subprocess.run(cmd, check=True)
+
+
+def duration(path):
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
+        check=True, capture_output=True, text=True).stdout.strip()
+    return float(out)
+
+
+def request_retry(method, url, tries=4, **kw):
+    for i in range(tries):
+        r = requests.request(method, url, timeout=120, **kw)
+        if r.status_code < 500 and r.status_code != 429:
+            return r
+        time.sleep(2 ** i * 3)
+    return r
+
+
+# ---------- voice ----------
+def pick_voice(job):
+    vid = job.get("voice_id") or DEFAULT_VOICE
+    r = request_retry("GET", "https://api.elevenlabs.io/v1/voices", headers={"xi-api-key": EL_KEY})
+    if r.ok:
+        ids = [v["voice_id"] for v in r.json().get("voices", [])]
+        if ids and vid not in ids:
+            print(f"voice {vid} not available, using {ids[0]}")
+            vid = ids[0]
+    return vid
+
+
+def tts(text, voice, path):
+    if path.exists():
+        return
+    r = request_retry(
+        "POST",
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voice}?output_format=mp3_44100_128",
+        headers={"xi-api-key": EL_KEY, "Content-Type": "application/json"},
+        json={"text": text, "model_id": "eleven_multilingual_v2",
+              "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.25}})
+    if not r.ok:
+        raise RuntimeError(f"ElevenLabs error {r.status_code}: {r.text[:300]}")
+    path.write_bytes(r.content)
+
+
+# ---------- footage ----------
+used_ids = set()
+credits = []
+
+
+def search_clips(query, n=8):
+    r = request_retry("GET", "https://pixabay.com/api/videos/", params={
+        "key": PX_KEY, "q": query, "per_page": 30, "safesearch": "true", "order": "popular"})
+    r.raise_for_status()
+    hits = []
+    for h in r.json().get("hits", []):
+        if h["id"] in used_ids:
+            continue
+        v = h["videos"].get("large") or {}
+        if not v.get("url") or v.get("width", 0) < 1280:
+            v = h["videos"].get("medium") or {}
+        if not v.get("url") or v.get("width", 0) < v.get("height", 1):
+            continue
+        hits.append((h, v))
+    return hits[:n]
+
+
+def get_clips(queries, workdir, need_seconds):
+    """Download landscape clips for the first query that returns results, falling back to the next."""
+    files = []
+    total = 0.0
+    for q in queries:
+        for h, v in search_clips(q):
+            p = workdir / f"px_{h['id']}.mp4"
+            if not p.exists():
+                rr = request_retry("GET", v["url"])
+                if not rr.ok:
+                    continue
+                p.write_bytes(rr.content)
+            used_ids.add(h["id"])
+            credits.append({"id": h["id"], "user": h.get("user"), "page": h.get("pageURL"), "query": q})
+            d = min(duration(p), 6.0)
+            files.append((p, d))
+            total += d
+            if total >= need_seconds:
+                return files
+        if files:
+            break
+    if not files:
+        raise RuntimeError(f"no footage for {queries}")
+    return files
+
+
+# ---------- video building ----------
+def esc(s):
+    return s.replace("\\", "\\\\").replace(":", "\\:").replace("'", "’").replace("%", "\\%")
+
+
+def build_segment(seg, idx, voice, work):
+    audio = work / f"a{idx:02d}.mp3"
+    tts(seg["text"], voice, audio)
+    adur = duration(audio)
+    vdur = adur + 0.6
+    clips = get_clips(seg["queries"], work, vdur)
+
+    # normalise clips and loop through them until vdur is covered
+    parts, t, k = [], 0.0, 0
+    while t < vdur:
+        src, d = clips[k % len(clips)]
+        d = min(d, vdur - t)
+        if d < 0.5 and parts:
+            break
+        out = work / f"s{idx:02d}_{k:02d}.mp4"
+        start = 0.5 if duration(src) > d + 1 else 0
+        run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start}", "-t", f"{d:.3f}", "-i", str(src),
+             "-vf", f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS},setsar=1",
+             "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", str(out)])
+        parts.append(out)
+        t += d
+        k += 1
+
+    lst = work / f"s{idx:02d}.txt"
+    lst.write_text("".join(f"file '{p.name}'\n" for p in parts))
+    raw = work / f"s{idx:02d}_raw.mp4"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(raw)])
+
+    # text overlays
+    filters = []
+    if seg.get("rank") is not None:
+        label = esc(f"#{seg['rank']}  {seg['name'].upper()}")
+        filters.append(
+            f"drawtext=fontfile={FONT}:text='{label}':fontsize=64:fontcolor=white:"
+            f"box=1:boxcolor=black@0.55:boxborderw=24:x=60:y=h-th-90")
+        filters.append(
+            f"drawtext=fontfile={FONT}:text='#{seg['rank']}':fontsize=320:fontcolor=white:"
+            f"borderw=10:bordercolor=black@0.7:x=(w-tw)/2:y=(h-th)/2:enable='lt(t,2.2)'")
+        if seg.get("stat"):
+            filters.append(
+                f"drawtext=fontfile={FONT}:text='{esc(seg['stat'])}':fontsize=52:fontcolor=#FFD23F:"
+                f"box=1:boxcolor=black@0.55:boxborderw=18:x=60:y=60:enable='between(t,2.5,{max(3.0, adur - 1):.2f})'")
+    elif seg.get("overlay"):
+        filters.append(
+            f"drawtext=fontfile={FONT}:text='{esc(seg['overlay'])}':fontsize=96:fontcolor=white:"
+            f"borderw=8:bordercolor=black@0.7:x=(w-tw)/2:y=(h-th)/2:enable='lt(t,4)'")
+    filters.append("drawtext=fontfile=" + FONT + ":text='WILD RANK':fontsize=34:fontcolor=white@0.8:x=w-tw-40:y=36")
+    seg_out = work / f"seg{idx:02d}.mp4"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-i", str(audio),
+         "-filter_complex", f"[0:v]{','.join(filters)}[v];[1:a]adelay=200|200,apad[a]",
+         "-map", "[v]", "-map", "[a]", "-t", f"{vdur:.3f}",
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+         "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(seg_out)])
+    return seg_out
+
+
+def make_short(seg_file, seg, out):
+    d = min(duration(seg_file), 58.0)
+    top = esc(f"#{seg['rank']} {seg['name'].upper()}")
+    vf = (f"crop=ih*9/16:ih,scale=1080:1920,setsar=1,"
+          f"drawtext=fontfile={FONT}:text='{top}':fontsize=78:fontcolor=white:box=1:boxcolor=black@0.6:"
+          f"boxborderw=26:x=(w-tw)/2:y=220,"
+          f"drawtext=fontfile={FONT}:text='Full ranking on Wild Rank':fontsize=46:fontcolor=#FFD23F:"
+          f"box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(seg_file), "-t", f"{d:.3f}", "-vf", vf,
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+         "-c:a", "aac", "-b:a", "160k", str(out)])
+
+
+def make_thumb(src_video, text_lines, out):
+    frame = out.with_suffix(".frame.jpg")
+    run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "3", "-i", str(src_video), "-frames:v", "1", str(frame)])
+    img = Image.open(frame).convert("RGB").resize((1280, 720))
+    img = ImageEnhance.Brightness(img).enhance(0.75)
+    img = ImageEnhance.Contrast(img).enhance(1.25)
+    d = ImageDraw.Draw(img)
+    y = 70
+    for i, line in enumerate(text_lines):
+        size = 120 if i == 0 else 84
+        f = ImageFont.truetype(FONT, size)
+        color = (255, 210, 63) if i == 0 else (255, 255, 255)
+        d.text((60, y), line, font=f, fill=color, stroke_width=8, stroke_fill=(0, 0, 0))
+        y += size + 24
+    img.save(out, quality=92)
+    frame.unlink(missing_ok=True)
+
+
+def main(job_path):
+    job = json.loads(Path(job_path).read_text())
+    slug = job["slug"]
+    out_dir = Path("out") / slug
+    work = Path("work") / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    work.mkdir(parents=True, exist_ok=True)
+    voice = pick_voice(job)
+
+    segments = job["segments"]
+    seg_files = []
+    for i, seg in enumerate(segments):
+        seg_files.append(build_segment(seg, i, voice, work))
+
+    lst = work / "final.txt"
+    lst.write_text("".join(f"file '{p.name}'\n" for p in seg_files))
+    final = out_dir / f"{slug}.mp4"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),
+         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+         "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(final)])
+
+    files = [final.name]
+    for n, rank in enumerate(job.get("shorts", []), 1):
+        i = next(k for k, s in enumerate(segments) if s.get("rank") == rank)
+        sp = out_dir / f"{slug}_short_{n}.mp4"
+        make_short(seg_files[i], segments[i], sp)
+        files.append(sp.name)
+
+    thumb_src = seg_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
+    thumb = out_dir / f"{slug}_thumb.jpg"
+    make_thumb(thumb_src, job["thumbnail_text"], thumb)
+    files.append(thumb.name)
+
+    manifest = {"slug": slug, "duration": duration(final), "files": files, "credits": credits,
+                "chars": sum(len(s["text"]) for s in segments)}
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
+    print(json.dumps(manifest, indent=2))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])
