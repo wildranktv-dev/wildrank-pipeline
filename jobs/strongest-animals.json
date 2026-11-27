@@ -77,10 +77,15 @@
       "stat": "Talons longer than a grizzly's claws",
       "text": "Number seven: the harpy eagle. Living in the rainforests of Central and South America, it hunts monkeys and sloths that it snatches straight from the treetops. Its back talons can be longer than the claws of a grizzly bear, and its grip is among the most powerful of any bird. Lifting heavy, struggling prey off a branch and flying away with it takes enormous strength for an animal that weighs less than a house cat.",
       "queries": [
-        "harpy eagle",
-        "eagle"
+        "harpy eagle"
       ],
       "must": [
+        "harpy"
+      ],
+      "fallback": [
+        "eagle"
+      ],
+      "fallback_must": [
         "eagle"
       ]
     },
