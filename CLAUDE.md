@@ -1,6 +1,6 @@
 # Wild Rank pipeline — rules for every production run
 
-Channel: Wild Rank (@WildRank_TV), YouTube ID UCE6icOTx09L4cguDtRUgyTg. English narration; YouTube auto-dubbing adds Portuguese.
+Channel: Wild Rank (@WildRank_TV), YouTube ID UCE6icOTx09L4cguDtRUgyTg. English narration; Portuguese subtitles + pt-BR title (auto-dubbing not yet eligible for this channel).
 Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paulo, network "youtube".
 
 ## How a video is made
@@ -12,6 +12,7 @@ Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paul
    - Each segment: `queries` + `must` (exact tag names of the animal, e.g. ["tiger","tigers"]), optional
      `fallback` + `fallback_must` for generic footage (shown with an "Illustrative footage" label).
    - `text_pt` = natural Brazilian Portuguese translation of `text` in every segment (used for the PT subtitle file).
+   - Top level `title_pt` (max 100 chars) and `description_pt` = Brazilian Portuguese title/description.
    - `stat` = one short on-screen fact. `shorts` = 3 ranks with the most visual/viral appeal. `thumb_rank` = most iconic animal.
 4. Commit and push to `main`. GitHub Actions renders and publishes the release `<slug>` with the MP4, 3 Shorts, thumbnail,
    `<slug>_en.srt`, `<slug>_pt.srt` and manifest.
@@ -23,8 +24,9 @@ Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paul
 6. Schedule with Metricool `createScheduledPost`: long video `type: video`, `privacy: public`, `madeForKids: false`,
    `category: PETS_ANIMALS`, `videoThumbnailUrl` = the thumbnail, first comment with a question. Shorts `type: short`.
    Schedule each Short on a different day at 12:00 or 18:00 local, never two Shorts in the same slot.
-7. Subtitles: once the video is live, upload `<slug>_pt.srt` (Portuguese) and `<slug>_en.srt` (English) in YouTube Studio
-   (Video → Subtitles). If you cannot reach YouTube Studio in this run, say so in the report and list the video as pending subtitles.
+7. Subtitles and pt-BR title: automatic. The `localize` workflow (every 30 min) finds the published video by its exact
+   title, uploads `<slug>_pt.srt` / `<slug>_en.srt` and sets the pt-BR title/description via the YouTube API. Keep the
+   Metricool title identical to the job `title`. After publishing, check the localize run log; report failures.
 8. Tick the topic in `topics.md`, add the publish dates, commit, push.
 
 ## Content rules (monetization)
