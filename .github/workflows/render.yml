@@ -66,3 +66,15 @@ jobs:
               gh release create "$slug" out/$slug/* --title "$slug" --notes "Rendered by pipeline"
             fi
           done
+
+      - name: Keep generated voice on failure (avoids paying TTS twice)
+        if: failure() && steps.jobs.outputs.list != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for j in ${{ steps.jobs.outputs.list }}; do
+            slug=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['slug'])" "$j")
+            ls work/$slug/tts_*.mp3 >/dev/null 2>&1 || continue
+            gh release view "$slug" >/dev/null 2>&1 || gh release create "$slug" --title "$slug" --notes "partial (voice cache)"
+            gh release upload "$slug" work/$slug/tts_*.mp3 --clobber
+          done

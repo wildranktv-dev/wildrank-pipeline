@@ -7,125 +7,389 @@
   "always_illustrative": true,
   "illustrative_label": "Imagem ilustrativa",
   "short_footer": "Ranking completo no Setup Rank",
-  "deny": ["rodent", "rat", "mice", "animal", "animals", "hamster", "cat", "pet", "wildlife"],
+  "deny": [
+    "rodent",
+    "rat",
+    "mice",
+    "animal",
+    "animals",
+    "hamster",
+    "cat",
+    "pet",
+    "wildlife"
+  ],
   "title": "Os 10 Melhores Mouses Gamer de 2026: do Barato ao Topo | Setup Rank",
-  "thumbnail_text": ["TOP 10", "MOUSES GAMER", "DO BARATO AO TOPO"],
+  "thumbnail_text": [
+    "TOP 10",
+    "MOUSES GAMER",
+    "DO BARATO AO TOPO"
+  ],
   "thumb_rank": 1,
-  "shorts": [1, 8, 10],
-  "tags": ["mouse gamer", "melhor mouse gamer", "mouse gamer barato", "mouse sem fio", "logitech g203", "superlight 2", "viper v3 pro", "attack shark x11", "setup gamer", "periféricos"],
+  "shorts": [
+    1,
+    8,
+    10
+  ],
+  "tags": [
+    "mouse gamer",
+    "melhor mouse gamer",
+    "mouse gamer barato",
+    "mouse sem fio",
+    "logitech g203",
+    "superlight 2",
+    "viper v3 pro",
+    "attack shark x11",
+    "setup gamer",
+    "periféricos"
+  ],
   "description": "Os 10 melhores mouses gamer de 2026, do mais barato ao topo de linha: peso, sensor, conexão e para quem cada um faz sentido.\n\n🖱️ LINKS (Amazon Brasil)\n#10 Logitech G203 LIGHTSYNC: https://www.amazon.com.br/s?k=Logitech+G203+Lightsync&tag=setuprank-20\n#9 Redragon Cobra M711: https://www.amazon.com.br/s?k=Redragon+Cobra+M711&tag=setuprank-20\n#8 Attack Shark X11: https://www.amazon.com.br/s?k=Attack+Shark+X11&tag=setuprank-20\n#7 Logitech G305 LIGHTSPEED: https://www.amazon.com.br/s?k=Logitech+G305+Lightspeed&tag=setuprank-20\n#6 Razer Basilisk V3: https://www.amazon.com.br/s?k=Razer+Basilisk+V3&tag=setuprank-20\n#5 Logitech G502 X: https://www.amazon.com.br/s?k=Logitech+G502+X&tag=setuprank-20\n#4 HyperX Pulsefire Haste 2: https://www.amazon.com.br/s?k=HyperX+Pulsefire+Haste+2&tag=setuprank-20\n#3 Razer DeathAdder V3: https://www.amazon.com.br/s?k=Razer+DeathAdder+V3&tag=setuprank-20\n#2 Razer Viper V3 Pro: https://www.amazon.com.br/s?k=Razer+Viper+V3+Pro&tag=setuprank-20\n#1 Logitech G Pro X Superlight 2: https://www.amazon.com.br/s?k=Logitech+G+Pro+X+Superlight+2&tag=setuprank-20\n\nComo Associado Amazon, ganho com compras qualificadas. Os links acima podem me render uma comissão, sem custo extra para você. Preços mudam o tempo todo, então confira o valor na página antes de comprar.\n\nFONTES DAS ESPECIFICAÇÕES: páginas oficiais dos fabricantes (Logitech G, Razer, HyperX, Redragon, Attack Shark) e reviews do Tom's Hardware e PC Gamer. Peso e DPI são os informados pelo fabricante; podem variar por versão e cor.\n\nVídeo com imagens ilustrativas licenciadas (Pixabay); os produtos não aparecem nas imagens. Narração feita com voz de IA. Ranking e análise originais do Setup Rank.\n\n00:00 Introdução\n#mousegamer #setupgamer #perifericos",
   "segments": [
     {
       "overlay": "TOP 10 MOUSES GAMER",
       "text": "Mouse gamer é aquele periférico em que dá pra gastar trinta reais ou mais de mil, e a diferença nem sempre está onde a propaganda diz. Número gigante de DPI, por exemplo, quase não importa: a maioria dos jogadores usa entre oitocentos e três mil e duzentos. O que muda a sua experiência de verdade é o peso, o formato na sua mão, a qualidade do sensor e se o mouse é com fio ou sem fio. Neste vídeo eu ranqueei os dez melhores mouses gamer de 2026, começando pelos mais baratos e subindo até o topo de linha. Pra cada um você vai ver as especificações principais e pra quem ele faz sentido. Os links de todos estão na descrição. Fica até o final, porque o número um é o mouse que eu compraria hoje se pudesse ter só um.",
-      "queries": ["gaming setup", "gamer playing computer"],
-      "must": ["gaming", "gamer", "esports", "computer", "pc", "keyboard", "setup", "video game", "gaming setup"]
+      "queries": [
+        "gaming setup",
+        "gamer playing computer"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "esports",
+        "computer",
+        "pc",
+        "keyboard",
+        "setup",
+        "video game",
+        "gaming setup"
+      ]
     },
     {
       "rank": 10,
       "name": "Logitech G203 LIGHTSYNC",
       "tier": "ENTRADA",
-      "specs": ["Com fio", "85 g", "Sensor de até 8.000 DPI", "6 botões programáveis + RGB"],
+      "specs": [
+        "Com fio",
+        "85 g",
+        "Sensor de até 8.000 DPI",
+        "6 botões programáveis + RGB"
+      ],
       "for": "quem está montando o primeiro setup",
       "text": "Número dez: Logitech G203 LIGHTSYNC. Esse é o mouse que eu indico pra quem está começando e não quer arriscar dinheiro em marca desconhecida. Ele é com fio, pesa cerca de oitenta e cinco gramas e tem sensor de até oito mil DPI, bem mais do que você vai usar. O formato é simples e simétrico, confortável pra mão pequena ou média, e tem seis botões programáveis pelo software da Logitech, além de iluminação RGB. Não espere peso leve de mouse competitivo nem acabamento premium: o cabo é de borracha e os pés poderiam ser melhores. Mas pelo preço que costuma aparecer em promoção, é difícil achar algo tão confiável. Se o seu orçamento é bem apertado e você quer um mouse que simplesmente funciona, ele é o ponto de partida mais seguro.",
-      "queries": ["computer mouse", "gaming mouse"],
-      "must": ["mouse", "computer mouse", "gaming mouse", "computer", "pc", "gaming", "desk", "technology"]
+      "queries": [
+        "computer mouse",
+        "gaming mouse"
+      ],
+      "must": [
+        "mouse",
+        "computer mouse",
+        "gaming mouse",
+        "computer",
+        "pc",
+        "gaming",
+        "desk",
+        "technology"
+      ]
     },
     {
       "rank": 9,
       "name": "Redragon Cobra M711",
       "tier": "ENTRADA",
-      "specs": ["Com fio", "Sensor de até 10.000 DPI", "7 botões programáveis", "RGB com vários efeitos"],
+      "specs": [
+        "Com fio",
+        "Sensor de até 10.000 DPI",
+        "7 botões programáveis",
+        "RGB com vários efeitos"
+      ],
       "for": "quem quer muito mouse por pouco dinheiro",
       "text": "Número nove: Redragon Cobra M711. A Redragon ficou famosa no Brasil por entregar muito pelo preço, e o Cobra é provavelmente o mouse mais conhecido da marca. A versão mais comum tem sensor de até dez mil DPI, e existe uma revisão mais nova que sobe esse número. São sete botões programáveis, iluminação RGB chamativa e um formato pensado pra mão direita, que agrada quem joga com a palma apoiada. Comparado ao G203, ele tem mais botões e mais pegada, mas também é um pouco maior e mais pesado, então não é a melhor escolha pra quem gosta de movimentos rápidos. Vale comprar de vendedor oficial pra ter garantia. Se você joga de tudo um pouco e quer atalhos extras sem gastar muito, o Cobra continua sendo uma ótima compra.",
-      "queries": ["gamer playing computer", "esports gaming"],
-      "must": ["gaming", "gamer", "esports", "computer", "pc", "video game", "keyboard"]
+      "queries": [
+        "gamer playing computer",
+        "esports gaming"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "esports",
+        "computer",
+        "pc",
+        "video game",
+        "keyboard"
+      ]
     },
     {
       "rank": 8,
       "name": "Attack Shark X11",
       "tier": "CUSTO-BENEFÍCIO",
-      "specs": ["Sem fio 2.4G, Bluetooth e cabo", "Cerca de 63 g", "Sensor PixArt PAW3311, até 22.000 DPI", "Base de carregamento magnética"],
+      "specs": [
+        "Sem fio 2.4G, Bluetooth e cabo",
+        "Cerca de 63 g",
+        "Sensor PixArt PAW3311, até 22.000 DPI",
+        "Base de carregamento magnética"
+      ],
       "for": "quem quer sair do fio gastando pouco",
       "text": "Número oito: Attack Shark X11. Esse é o mouse que mostra como o mercado mudou. Há poucos anos, um mouse sem fio leve e com sensor bom custava caro. O X11 tem conexão tripla, ou seja, receptor sem fio, Bluetooth e cabo, pesa por volta de sessenta e três gramas segundo o fabricante e usa o sensor PixArt PAW3311, um sensor de nível intermediário muito respeitado. Ainda vem com uma base magnética que carrega o mouse enquanto ele fica parado na mesa. Os pontos fracos são o software simples e o controle de qualidade, que não é do mesmo nível das grandes marcas. Mas, pra quem quer experimentar a liberdade do sem fio e a leveza de um mouse competitivo pagando preço de mouse de entrada, ele é uma das escolhas mais inteligentes da lista.",
-      "queries": ["gaming mouse", "computer mouse desk"],
-      "must": ["mouse", "computer mouse", "gaming mouse", "computer", "pc", "gaming", "desk", "technology"]
+      "queries": [
+        "gaming mouse",
+        "computer mouse desk"
+      ],
+      "must": [
+        "mouse",
+        "computer mouse",
+        "gaming mouse",
+        "computer",
+        "pc",
+        "gaming",
+        "desk",
+        "technology"
+      ]
     },
     {
       "rank": 7,
       "name": "Logitech G305 LIGHTSPEED",
       "tier": "CUSTO-BENEFÍCIO",
-      "specs": ["Sem fio LIGHTSPEED", "99 g com pilha", "Sensor HERO, até 12.000 DPI", "Até 250 h com uma pilha AA"],
+      "specs": [
+        "Sem fio LIGHTSPEED",
+        "99 g com pilha",
+        "Sensor HERO, até 12.000 DPI",
+        "Até 250 h com uma pilha AA"
+      ],
       "for": "quem quer sem fio confiável de marca grande",
       "text": "Número sete: Logitech G305 LIGHTSPEED. Esse é o sem fio mais seguro da faixa intermediária. Ele usa a tecnologia LIGHTSPEED da Logitech, que tem latência baixa o bastante pra jogo competitivo, e o sensor HERO de até doze mil DPI. A grande sacada é a bateria: ele funciona com uma única pilha AA e a Logitech fala em até duzentas e cinquenta horas de uso. Isso significa meses sem pensar em carregar. O lado negativo é o peso: com a pilha, ele fica em torno de noventa e nove gramas, bem acima dos mouses leves que vêm a seguir, e ele não tem RGB. Muita gente compensa usando pilha de lítio, que é mais leve. Se você valoriza confiabilidade e quer um sem fio que dura, mesmo não sendo o mais leve, o G305 continua imbatível nessa proposta.",
-      "queries": ["computer setup desk", "pc gaming"],
-      "must": ["computer", "pc", "desk", "setup", "gaming", "keyboard", "technology", "workspace"]
+      "queries": [
+        "computer setup desk",
+        "pc gaming"
+      ],
+      "must": [
+        "computer",
+        "pc",
+        "desk",
+        "setup",
+        "gaming",
+        "keyboard",
+        "technology",
+        "workspace"
+      ]
     },
     {
       "rank": 6,
       "name": "Razer Basilisk V3",
       "tier": "INTERMEDIÁRIO",
-      "specs": ["Com fio", "101 g", "Sensor Focus+, até 26.000 DPI", "11 botões + scroll com inclinação"],
+      "specs": [
+        "Com fio",
+        "101 g",
+        "Sensor Focus+, até 26.000 DPI",
+        "11 botões + scroll com inclinação"
+      ],
       "for": "quem joga MMO, MOBA e usa muitos atalhos",
       "text": "Número seis: Razer Basilisk V3. Até aqui falamos de mouses mais simples. O Basilisk é pra quem quer controle total. Ele tem onze botões programáveis, incluindo um gatilho no lado esquerdo que reduz a sensibilidade enquanto você segura, ótimo pra mirar com precisão. A roda de rolagem é inclinável e pode alternar entre o modo com degraus e o modo livre, que gira sozinho e ajuda muito pra navegar em listas e páginas longas. O sensor Focus+ chega a vinte e seis mil DPI. O formato é ergonômico pra mão direita, com apoio pro polegar. Em compensação, ele pesa cento e um gramas e é com fio, então não é o ideal pra jogos de tiro em que você faz movimentos amplos. Pra MMO, MOBA, edição ou uso misto de trabalho e jogo, poucos mouses entregam tanto.",
-      "queries": ["gamer playing computer", "rgb keyboard"],
-      "must": ["gaming", "gamer", "keyboard", "rgb", "computer", "pc", "video game", "esports"]
+      "queries": [
+        "gamer playing computer",
+        "rgb keyboard"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "keyboard",
+        "rgb",
+        "computer",
+        "pc",
+        "video game",
+        "esports"
+      ]
     },
     {
       "rank": 5,
       "name": "Logitech G502 X",
       "tier": "INTERMEDIÁRIO",
-      "specs": ["Com fio", "89 g", "Sensor HERO 25K, até 25.600 DPI", "Switches híbridos LIGHTFORCE"],
+      "specs": [
+        "Com fio",
+        "89 g",
+        "Sensor HERO 25K, até 25.600 DPI",
+        "Switches híbridos LIGHTFORCE"
+      ],
       "for": "fãs do formato G502 que querem algo mais leve",
       "text": "Número cinco: Logitech G502 X. O G502 é um dos formatos mais famosos da história dos mouses gamer, e essa versão modernizou a receita. O peso caiu pra cerca de oitenta e nove gramas na versão com fio, bem menos do que os G502 antigos, que vinham com pesos extras. Ele usa o sensor HERO 25K, com até vinte e cinco mil e seiscentos DPI, e switches híbridos que a Logitech chama de LIGHTFORCE, combinando o acionamento óptico com a sensação de clique mecânico. O botão do polegar que mudava a sensibilidade agora é reversível e removível, então você adapta ao seu jeito. Ainda é um mouse grande, que pede mão média ou grande. Se você gosta de um mouse cheio de recursos, mas acha o Basilisk pesado demais, o G502 X é o equilíbrio certo.",
-      "queries": ["gaming mouse", "computer mouse"],
-      "must": ["mouse", "computer mouse", "gaming mouse", "computer", "pc", "gaming", "desk", "technology"]
+      "queries": [
+        "gaming mouse",
+        "computer mouse"
+      ],
+      "must": [
+        "mouse",
+        "computer mouse",
+        "gaming mouse",
+        "computer",
+        "pc",
+        "gaming",
+        "desk",
+        "technology"
+      ]
     },
     {
       "rank": 4,
       "name": "HyperX Pulsefire Haste 2",
       "tier": "COMPETITIVO",
-      "specs": ["Com fio", "53 g", "Sensor de até 26.000 DPI", "Taxa de resposta de até 8.000 Hz"],
+      "specs": [
+        "Com fio",
+        "53 g",
+        "Sensor de até 26.000 DPI",
+        "Taxa de resposta de até 8.000 Hz"
+      ],
       "for": "quem joga FPS com fio e quer leveza máxima",
       "text": "Número quatro: HyperX Pulsefire Haste 2. Agora a lista entra no território competitivo. O Haste 2 pesa só cinquenta e três gramas na versão com fio, e isso sem os furos no casco que eram comuns nos mouses leves antigos. Ele tem sensor de até vinte e seis mil DPI e suporta taxa de resposta de até oito mil hertz, o que significa que ele informa a posição ao computador até oito mil vezes por segundo. Na prática, essa taxa altíssima só faz diferença real em monitores de taxa de atualização muito alta e consome mais processador, então mil hertz já resolve pra maioria. O cabo é macio e flexível, o que quase faz você esquecer que ele é com fio. Se você joga Valorant, CS ou outros FPS e prefere não depender de bateria, ele é uma escolha excelente.",
-      "queries": ["esports gaming", "gamer playing computer"],
-      "must": ["gaming", "gamer", "esports", "computer", "pc", "video game", "keyboard", "headset"]
+      "queries": [
+        "esports gaming",
+        "gamer playing computer"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "esports",
+        "computer",
+        "pc",
+        "video game",
+        "keyboard",
+        "headset"
+      ]
     },
     {
       "rank": 3,
       "name": "Razer DeathAdder V3",
       "tier": "COMPETITIVO",
-      "specs": ["Com fio", "59 g", "Sensor Focus Pro 30K, até 30.000 DPI", "Taxa de resposta de até 8.000 Hz"],
+      "specs": [
+        "Com fio",
+        "59 g",
+        "Sensor Focus Pro 30K, até 30.000 DPI",
+        "Taxa de resposta de até 8.000 Hz"
+      ],
       "for": "quem prefere formato ergonômico e joga sério",
       "text": "Número três: Razer DeathAdder V3. O DeathAdder é sinônimo de formato ergonômico pra mão direita, aquele que encaixa naturalmente quando você apoia a palma. A versão V3 pegou esse formato clássico e emagreceu tudo: são cerca de cinquenta e nove gramas na versão com fio. Por dentro tem o sensor Focus Pro 30K, com até trinta mil DPI, e suporte a oito mil hertz. A diferença pro Haste 2 está principalmente no formato. O Haste é simétrico e menor, ótimo pra quem segura com as pontas dos dedos. O DeathAdder é mais alto e mais curvado, e costuma agradar quem joga com a mão toda apoiada. Ele não tem botões extras nem RGB, porque o foco é só desempenho. Se você quer conforto ergonômico sem abrir mão de leveza, ele é um dos melhores com fio do mercado.",
-      "queries": ["gaming setup", "pc gaming"],
-      "must": ["gaming", "gamer", "computer", "pc", "setup", "keyboard", "desk", "gaming setup"]
+      "queries": [
+        "gaming setup",
+        "pc gaming"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "computer",
+        "pc",
+        "setup",
+        "keyboard",
+        "desk",
+        "gaming setup"
+      ]
     },
     {
       "rank": 2,
       "name": "Razer Viper V3 Pro",
       "tier": "TOPO",
-      "specs": ["Sem fio HyperSpeed", "54 g", "Sensor Focus Pro 35K, até 35.000 DPI", "Até 95 h de bateria"],
+      "specs": [
+        "Sem fio HyperSpeed",
+        "54 g",
+        "Sensor Focus Pro 35K, até 35.000 DPI",
+        "Até 95 h de bateria"
+      ],
       "for": "competitivo que quer o sem fio mais leve da Razer",
       "text": "Número dois: Razer Viper V3 Pro. Chegamos aos mouses topo de linha, aqueles que você vê na mão de jogadores profissionais. O Viper V3 Pro é sem fio e mesmo assim pesa cerca de cinquenta e quatro gramas, menos do que muitos mouses com fio desta lista. O sensor Focus Pro 35K chega a trinta e cinco mil DPI e a Razer fala em até noventa e cinco horas de bateria, um número que cai se você usar a taxa de resposta máxima. O formato é simétrico, mais alto atrás, e foi desenhado em conjunto com atletas de esports. O ponto contra é o preço, que fica bem acima de tudo o que vimos até aqui, e a falta de botões extras. Se você leva FPS a sério e quer o sem fio mais rápido e leve possível, ele está praticamente empatado com o primeiro lugar.",
-      "queries": ["esports gaming", "gamer playing computer"],
-      "must": ["gaming", "gamer", "esports", "computer", "pc", "video game", "keyboard", "headset"]
+      "queries": [
+        "esports gaming",
+        "gamer playing computer"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "esports",
+        "computer",
+        "pc",
+        "video game",
+        "keyboard",
+        "headset"
+      ]
     },
     {
       "rank": 1,
       "name": "Logitech G Pro X Superlight 2",
       "tier": "TOPO",
-      "specs": ["Sem fio LIGHTSPEED", "60 g", "Sensor HERO 2, até 44.000 DPI", "Até 95 h de bateria"],
+      "specs": [
+        "Sem fio LIGHTSPEED",
+        "60 g",
+        "Sensor HERO 2, até 44.000 DPI",
+        "Até 95 h de bateria"
+      ],
       "for": "quem quer o sem fio competitivo mais completo",
       "text": "Número um: Logitech G Pro X Superlight 2. Por que ele e não o Viper? Porque ele é o mais completo. Pesa cerca de sessenta gramas, é sem fio com a conexão LIGHTSPEED e usa o sensor HERO 2, que após atualização de firmware passou a chegar a quarenta e quatro mil DPI. A bateria dura até noventa e cinco horas, carrega por USB-C e é compatível com o carregamento sem fio da Logitech. O formato simétrico e discreto funciona bem em quase todo tipo de pegada e tamanho de mão, e é exatamente isso que faz dele a recomendação mais segura do topo. Ele também tem um dos maiores históricos entre profissionais, o que mostra a confiança no projeto. É caro, então espere uma promoção. Mas se você quer um mouse pra durar anos e servir pra qualquer jogo, é esse.",
-      "queries": ["gaming mouse", "computer mouse desk"],
-      "must": ["mouse", "computer mouse", "gaming mouse", "computer", "pc", "gaming", "desk", "technology"]
+      "queries": [
+        "gaming mouse",
+        "computer mouse desk"
+      ],
+      "must": [
+        "mouse",
+        "computer mouse",
+        "gaming mouse",
+        "computer",
+        "pc",
+        "gaming",
+        "desk",
+        "technology"
+      ]
     },
     {
       "overlay": "QUAL É O SEU?",
       "text": "Resumindo: se o orçamento é curto, vá de G203 ou Cobra. Se quer sair do fio gastando pouco, o Attack Shark X11 é a surpresa da lista, e o G305 é a opção mais confiável. Pra quem usa muitos atalhos, Basilisk V3 ou G502 X. Pra FPS com fio, Haste 2 ou DeathAdder V3, dependendo do formato que você prefere. E no topo, Viper V3 Pro e Superlight 2 brigam pelo título, com o Superlight levando pela versatilidade. Uma dica final: antes de comprar, pense no tamanho da sua mão e no jeito que você segura o mouse, porque isso importa mais do que qualquer número da caixa. Todos os links estão na descrição. E me conta nos comentários: qual mouse você usa hoje e qual quer comprar? Se inscreva no Setup Rank pra ver os próximos rankings de teclados, headsets e monitores.",
-      "queries": ["gaming setup", "rgb keyboard"],
-      "must": ["gaming", "gamer", "computer", "pc", "setup", "keyboard", "rgb", "gaming setup", "desk"]
+      "queries": [
+        "gaming setup",
+        "rgb keyboard"
+      ],
+      "must": [
+        "gaming",
+        "gamer",
+        "computer",
+        "pc",
+        "setup",
+        "keyboard",
+        "rgb",
+        "gaming setup",
+        "desk"
+      ]
     }
+  ],
+  "pool_queries": [
+    "computer keyboard",
+    "video game",
+    "gaming headset",
+    "computer monitor",
+    "streamer",
+    "pc setup",
+    "technology",
+    "laptop",
+    "typing keyboard",
+    "controller gaming",
+    "neon gaming",
+    "office desk computer"
+  ],
+  "pool_must": [
+    "gaming",
+    "gamer",
+    "esports",
+    "computer",
+    "pc",
+    "keyboard",
+    "video game",
+    "headset",
+    "monitor",
+    "setup",
+    "desk",
+    "technology",
+    "laptop",
+    "typing",
+    "streamer",
+    "streaming",
+    "controller",
+    "gamepad",
+    "rgb",
+    "neon",
+    "workspace",
+    "office",
+    "mouse",
+    "computer mouse"
   ]
 }

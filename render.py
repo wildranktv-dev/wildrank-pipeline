@@ -123,6 +123,7 @@ def search_clips(query, must=None, n=8):
 def get_clips(seg, workdir, need_seconds):
     """Return (clips, illustrative). Specific queries must match `must` tags; otherwise use fallback queries."""
     plans = [(q, seg.get("must")) for q in seg["queries"]]
+    plans += [(q, JOB.get("pool_must")) for q in JOB.get("pool_queries", []) if q not in seg["queries"]]
     fallback = [(q, seg.get("fallback_must")) for q in seg.get("fallback", [])]
     for group, illustrative in ((plans, False), (fallback, True)):
         files, total = [], 0.0
