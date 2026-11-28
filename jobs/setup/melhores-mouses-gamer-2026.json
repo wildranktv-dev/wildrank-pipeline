@@ -70,7 +70,23 @@
     "3d character",
     "virtual reality",
     "joystick",
-    "console"
+    "console",
+    "geforce",
+    "nvidia",
+    "gtx",
+    "rtx",
+    "logitech",
+    "razer",
+    "corsair",
+    "steelseries",
+    "hyperx",
+    "apple",
+    "asus",
+    "msi",
+    "tunnel",
+    "christmas",
+    "glitter",
+    "party"
   ],
   "title": "Os 10 Melhores Mouses Gamer de 2026: do Barato ao Topo | Setup Rank",
   "thumbnail_text": [
@@ -514,7 +530,27 @@
     "rgb lighting",
     "esports",
     "setup",
-    "pc"
+    "pc",
+    "wireless mouse",
+    "mouse pad",
+    "peripherals",
+    "computer peripherals",
+    "rgb mouse",
+    "gaming desk",
+    "desk setup"
   ],
-  "allow_reuse": true
+  "allow_reuse": true,
+  "photos": true,
+  "photo_queries": [
+    "gaming mouse",
+    "computer mouse",
+    "mouse pad",
+    "rgb mouse",
+    "wireless mouse",
+    "gaming setup",
+    "mechanical keyboard",
+    "rgb keyboard",
+    "gaming desk",
+    "computer peripherals"
+  ]
 }

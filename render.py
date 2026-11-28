@@ -120,7 +120,49 @@ def search_clips(query, must=None, n=8):
     return hits[:n]
 
 
-def get_clips(seg, workdir, need_seconds):
+used_photos = set()
+
+
+def search_photos(query, must=None, n=12):
+    r = request_retry("GET", "https://pixabay.com/api/", params={
+        "key": PX_KEY, "q": query, "image_type": "photo", "orientation": "horizontal",
+        "per_page": 50, "safesearch": "true", "order": "popular", "min_width": 1600})
+    if not r.ok:
+        return []
+    hits = []
+    for h in r.json().get("hits", []):
+        if h["id"] in used_photos:
+            continue
+        tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
+        if any(t in DENY_TAGS or t in JOB.get("deny", []) for t in tags):
+            continue
+        if must and not any(t in must for t in tags[:3]):
+            continue
+        hits.append(h)
+    return hits[:n]
+
+
+def get_photos(seg, workdir, count):
+    out = []
+    queries = seg.get("photo_queries", seg["queries"]) + JOB.get("photo_queries", [])
+    for q in queries:
+        for h in search_photos(q, seg.get("must") or JOB.get("pool_must")):
+            if len(out) >= count:
+                return out
+            p = workdir / f"img_{h['id']}.jpg"
+            if not p.exists():
+                rr = request_retry("GET", h.get("largeImageURL") or h["webformatURL"])
+                if not rr.ok:
+                    continue
+                p.write_bytes(rr.content)
+            used_photos.add(h["id"])
+            credits.append({"id": h["id"], "type": "photo", "user": h.get("user"), "page": h.get("pageURL"),
+                            "query": q, "tags": h.get("tags")})
+            out.append((p, 4.5))
+    return out
+
+
+def _get_video_clips(seg, workdir, need_seconds):
     """Return (clips, illustrative). Specific queries must match `must` tags; otherwise use fallback queries."""
     plans = [(q, seg.get("must")) for q in seg["queries"]]
     plans += [(q, JOB.get("pool_must")) for q in JOB.get("pool_queries", []) if q not in seg["queries"]]
@@ -148,6 +190,20 @@ def get_clips(seg, workdir, need_seconds):
     raise RuntimeError(f"no footage for {seg.get('name') or seg.get('overlay')}")
 
 
+def get_clips(seg, workdir, need_seconds):
+    if not JOB.get("photos"):
+        return _get_video_clips(seg, workdir, need_seconds)
+    vids, illus = _get_video_clips(seg, workdir, need_seconds * 0.45)
+    photos = get_photos(seg, workdir, int(need_seconds * 0.6 / 4.5) + 1)
+    mixed = []
+    for i in range(max(len(vids), len(photos))):
+        if i < len(photos):
+            mixed.append(photos[i])
+        if i < len(vids):
+            mixed.append(vids[i])
+    return mixed, illus
+
+
 # ---------- video building ----------
 def esc(s):
     return s.replace("\\", "\\\\").replace(":", "\\:").replace("'", "’").replace("%", "\\%")
@@ -168,6 +224,18 @@ def build_segment(seg, idx, voice, work):
         if d < 0.5 and parts:
             break
         out = work / f"s{idx:02d}_{k:02d}.mp4"
+        if src.suffix == ".jpg":
+            frames = int(d * FPS) + 1
+            zin = k % 2 == 0
+            z = "min(1.0+0.0009*on,1.15)" if zin else "max(1.15-0.0009*on,1.0)"
+            run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-i", str(src), "-t", f"{d:.3f}",
+                 "-vf", f"scale=3840:2160:force_original_aspect_ratio=increase,crop=3840:2160,"
+                        f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={W}x{H}:fps={FPS},setsar=1",
+                 "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", str(out)])
+            parts.append(out)
+            t += d
+            k += 1
+            continue
         start = 0.5 if duration(src) > d + 1 else 0
         run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start}", "-t", f"{d:.3f}", "-i", str(src),
              "-vf", f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS},setsar=1",
