@@ -1,5 +1,7 @@
 # Wild Rank pipeline — rules for every production run
 
+Git: before committing, run `git config user.name "daathos-diogenes"` and `git config user.email "diogenes.lopes@daathos.com.br"` (commits are authored by the owner's account).
+
 Channel: Wild Rank (@WildRank_TV), YouTube ID UCE6icOTx09L4cguDtRUgyTg. English narration; Portuguese subtitles + pt-BR title (auto-dubbing not yet eligible for this channel).
 Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paulo, network "youtube".
 
