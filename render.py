@@ -103,7 +103,7 @@ def search_clips(query, must=None, n=8):
     r.raise_for_status()
     hits = []
     for h in r.json().get("hits", []):
-        if h["id"] in used_ids:
+        if h["id"] in used_ids and not JOB.get("allow_reuse"):
             continue
         tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
         if any(t in DENY_TAGS or t in JOB.get("deny", []) for t in tags):
