@@ -27,6 +27,7 @@ DENY_TAGS = {"3d", "animation", "cartoon", "render", "cgi", "ai generated", "ill
 EL_KEY = os.environ["ELEVENLABS_API_KEY"]
 PX_KEY = os.environ["PIXABAY_API_KEY"]
 SLUG = None
+JOB = {}
 
 
 def run(cmd):
@@ -105,7 +106,7 @@ def search_clips(query, must=None, n=8):
         if h["id"] in used_ids:
             continue
         tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
-        if any(t in DENY_TAGS for t in tags):
+        if any(t in DENY_TAGS or t in JOB.get("deny", []) for t in tags):
             continue
         # the subject must be one of the first 3 tags, matched exactly
         if must and not any(t in must for t in tags[:3]):
@@ -181,7 +182,14 @@ def build_segment(seg, idx, voice, work):
 
     # text overlays
     filters = []
-    if seg.get("rank") is not None:
+    card_png = None
+    if seg.get("specs"):
+        card_png = work / f"card{idx:02d}.png"
+        make_card(seg, card_png)
+        filters.append(
+            f"drawtext=fontfile={FONT}:text='#{seg['rank']}':fontsize=320:fontcolor=white:"
+            f"borderw=10:bordercolor=black@0.7:x=(w-tw)/2:y=(h-th)/2:enable='lt(t,2.0)'")
+    elif seg.get("rank") is not None:
         label = esc(f"#{seg['rank']}  {seg['name'].upper()}")
         filters.append(
             f"drawtext=fontfile={FONT}:text='{label}':fontsize=64:fontcolor=white:"
@@ -197,13 +205,21 @@ def build_segment(seg, idx, voice, work):
         filters.append(
             f"drawtext=fontfile={FONT}:text='{esc(seg['overlay'])}':fontsize=96:fontcolor=white:"
             f"borderw=8:bordercolor=black@0.7:x=(w-tw)/2:y=(h-th)/2:enable='lt(t,4)'")
-    if illustrative:
-        filters.append(f"drawtext=fontfile={FONT}:text='Illustrative footage':fontsize=28:fontcolor=white@0.85:"
-                       f"box=1:boxcolor=black@0.4:boxborderw=10:x=w-tw-40:y=h-th-40")
-    filters.append("drawtext=fontfile=" + FONT + ":text='WILD RANK':fontsize=34:fontcolor=white@0.8:x=w-tw-40:y=36")
+    if illustrative or JOB.get("always_illustrative"):
+        filters.append(f"drawtext=fontfile={FONT}:text='{esc(JOB.get('illustrative_label', 'Illustrative footage'))}'"
+                       f":fontsize=28:fontcolor=white@0.85:box=1:boxcolor=black@0.4:boxborderw=10:x=w-tw-40:y=h-th-40")
+    filters.append(f"drawtext=fontfile={FONT}:text='{esc(JOB.get('brand', 'WILD RANK'))}'"
+                   f":fontsize=34:fontcolor=white@0.8:x=w-tw-40:y=36")
     seg_out = work / f"seg{idx:02d}.mp4"
-    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-i", str(audio),
-         "-filter_complex", f"[0:v]{','.join(filters)}[v];[1:a]adelay=200|200,apad[a]",
+    if card_png:
+        fc = (f"[0:v]{','.join(filters)}[b];[2:v]format=rgba[c];"
+              f"[b][c]overlay=0:0:enable='gte(t,2.0)'[v];[1:a]adelay=200|200,apad[a]")
+        inputs = ["-i", str(raw), "-i", str(audio), "-loop", "1", "-i", str(card_png)]
+    else:
+        fc = f"[0:v]{','.join(filters)}[v];[1:a]adelay=200|200,apad[a]"
+        inputs = ["-i", str(raw), "-i", str(audio)]
+    run(["ffmpeg", "-y", "-loglevel", "error", *inputs,
+         "-filter_complex", fc,
          "-map", "[v]", "-map", "[a]", "-t", f"{vdur:.3f}",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(seg_out)])
@@ -255,6 +271,51 @@ def write_srt(segments, timings, field, path):
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+CARD_BG = (12, 14, 30, 225)
+CY, MG = (0, 214, 255), (170, 80, 255)
+
+
+def make_card(seg, path, accent=CY):
+    """Transparent 1920x1080 PNG with a product spec panel on the left (Setup Rank)."""
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    x0, y0, x1 = 60, 150, 980
+    lines = seg.get("specs", [])
+    f_rank = ImageFont.truetype(FONT, 64)
+    f_name = ImageFont.truetype(FONT, 50 if len(seg["name"]) <= 24 else 40)
+    f_tag = ImageFont.truetype(FONT, 30)
+    f_spec = ImageFont.truetype(FONT, 34)
+    for_lines = []
+    if seg.get("for"):
+        cur = ""
+        for w in ("Para quem: " + seg["for"]).split():
+            test = f"{cur} {w}".strip()
+            if d.textlength(test, font=f_tag) > (x1 - x0 - 72) and cur:
+                for_lines.append(cur)
+                cur = w
+            else:
+                cur = test
+        for_lines.append(cur)
+    h = 250 + 62 * len(lines) + 42 * len(for_lines) + (30 if for_lines else 0)
+    d.rounded_rectangle([x0, y0, x1, y0 + h], radius=28, fill=CARD_BG, outline=accent, width=4)
+    d.text((x0 + 36, y0 + 28), f"#{seg['rank']}", font=f_rank, fill=accent)
+    if seg.get("tier"):
+        tw = d.textlength(seg["tier"], font=f_tag)
+        d.rounded_rectangle([x1 - tw - 70, y0 + 40, x1 - 30, y0 + 88], radius=20, fill=MG)
+        d.text((x1 - tw - 50, y0 + 46), seg["tier"], font=f_tag, fill=(255, 255, 255))
+    d.text((x0 + 36, y0 + 118), seg["name"], font=f_name, fill=(255, 255, 255))
+    y = y0 + 205
+    for ln in lines:
+        d.ellipse([x0 + 40, y + 12, x0 + 54, y + 26], fill=accent)
+        d.text((x0 + 72, y), ln, font=f_spec, fill=(230, 235, 245))
+        y += 62
+    y += 14
+    for fl in for_lines:
+        d.text((x0 + 36, y), fl, font=f_tag, fill=accent)
+        y += 42
+    img.save(path)
+
+
 def make_short(seg_file, raw_file, seg, out, illustrative=False):
     d = min(duration(seg_file), 58.0)
     label = f"#{seg['rank']} {seg['name'].upper()}"
@@ -263,10 +324,11 @@ def make_short(seg_file, raw_file, seg, out, illustrative=False):
     vf = (f"crop=ih*9/16:ih,scale=1080:1920,setsar=1,"
           f"drawtext=fontfile={FONT}:text='{top}':fontsize={fs}:fontcolor=white:box=1:boxcolor=black@0.6:"
           f"boxborderw=26:x=(w-tw)/2:y=220,"
-          f"drawtext=fontfile={FONT}:text='Full ranking on Wild Rank':fontsize=46:fontcolor=#FFD23F:"
-          f"box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
-    if illustrative:
-        vf += (f",drawtext=fontfile={FONT}:text='Illustrative footage':fontsize=30:fontcolor=white@0.85:"
+          f"drawtext=fontfile={FONT}:text='{esc(JOB.get('short_footer', 'Full ranking on Wild Rank'))}'"
+          f":fontsize=46:fontcolor=#FFD23F:box=1:boxcolor=black@0.6:boxborderw=18:x=(w-tw)/2:y=h-360")
+    if illustrative or JOB.get("always_illustrative"):
+        vf += (f",drawtext=fontfile={FONT}:text='{esc(JOB.get('illustrative_label', 'Illustrative footage'))}'"
+               f":fontsize=30:fontcolor=white@0.85:"
                f"box=1:boxcolor=black@0.4:boxborderw=10:x=(w-tw)/2:y=h-260")
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_file), "-i", str(seg_file), "-t", f"{d:.3f}",
          "-map", "0:v", "-map", "1:a", "-vf", vf,
@@ -294,7 +356,8 @@ def make_thumb(src_video, text_lines, out):
 
 def main(job_path):
     job = json.loads(Path(job_path).read_text())
-    global SLUG
+    global SLUG, JOB
+    JOB = job
     slug = job["slug"]
     SLUG = slug
     out_dir = Path("out") / slug
@@ -324,7 +387,7 @@ def main(job_path):
     for sf, ad in zip(seg_files, audio_durs):
         timings.append((t0, ad))
         t0 += duration(sf)
-    for field, lang in (("text", "en"), ("text_pt", "pt")):
+    for field, lang in (("text", job.get("lang", "en")), ("text_pt", "pt")):
         if any(sg.get(field) for sg in segments):
             sp = out_dir / f"{slug}_{lang}.srt"
             write_srt(segments, timings, field, sp)
