@@ -399,6 +399,19 @@ def make_short(seg_file, raw_file, seg, out, illustrative=False):
         vf += (f",drawtext=fontfile={FONT}:text='{esc(JOB.get('illustrative_label', 'Illustrative footage'))}'"
                f":fontsize=30:fontcolor=white@0.85:"
                f"box=1:boxcolor=black@0.4:boxborderw=10:x=(w-tw)/2:y=h-260")
+    card = Path(raw_file).with_name("card" + Path(raw_file).name[1:].replace("_raw.mp4", ".png"))
+    if seg.get("specs") and card.exists():
+        im = Image.open(card)
+        im = im.crop(im.getbbox())
+        im = im.resize((1000, int(im.height * 1000 / im.width)))
+        cs = card.with_name(card.stem + "_short.png")
+        im.save(cs)
+        fc = f"[0:v]{vf}[b];[2:v]format=rgba[c];[b][c]overlay=(W-w)/2:H-h-470:enable='gte(t,2.0)'[v]"
+        run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_file), "-i", str(seg_file), "-loop", "1",
+             "-i", str(cs), "-t", f"{d:.3f}", "-filter_complex", fc, "-map", "[v]", "-map", "1:a",
+             "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+             "-c:a", "aac", "-b:a", "160k", str(out)])
+        return
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_file), "-i", str(seg_file), "-t", f"{d:.3f}",
          "-map", "0:v", "-map", "1:a", "-vf", vf,
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
