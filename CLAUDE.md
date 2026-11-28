@@ -33,3 +33,19 @@ Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paul
 - No sexual content or nudity, no children, no reuploaded third-party clips, no graphic violence or animal suffering.
 - Original script with analysis in every video. Avoid copy-paste structure between videos.
 - Footage only from Pixabay (licence allows commercial use). Narration is an AI voice (disclosed in the description).
+
+# Setup Rank (@SetupRank) — second channel, Portuguese (Brazil)
+Channel ID UC0yBf_m6h0EnOBoijVSM2Lg. Metricool brand/blogId 8422245, timezone America/Sao_Paulo.
+Same renderer; jobs live in `jobs/setup/<slug>.json` following `jobs/setup/melhores-mouses-gamer-2026.json`
+(lang "pt", voice_id 7lu3ze7orhWaNeSPowWx, brand "SETUP RANK", always_illustrative, photos, deny/pool lists).
+- Topic queue: `topics-setup.md`. Video Tue and Thu 18:00; its 3 Shorts on the following days at 12:00/18:00 (check getScheduledPosts of 8422245).
+- Each product segment has a spec card: `specs` (4 short lines), `tier`, `for`. Specs only from manufacturer pages or
+  reputable reviews (Tom's Hardware, PC Gamer, RTINGS…); no prices in the script (they change), say "em promoção" at most.
+- Footage is generic (Pixabay video + photos) with "Imagem ilustrativa". QA the frame grid: no off-topic images (pianos, cartoons,
+  people-only office scenes, fire), no visible brand logos that contradict the product (e.g. Corsair on a Logitech segment),
+  no game/character IP. Block bad items with `deny` tags or `deny_ids` and re-render.
+- Description: Amazon links `https://www.amazon.com.br/s?k=<produto>&tag=setuprank-20` for every product, the disclosure
+  "Como Associado Amazon, ganho com compras qualificadas.", sources, "imagens ilustrativas", "narração com voz de IA".
+- Publish via Metricool: type video, public, madeForKids false, category SCIENCE_TECHNOLOGY, thumbnail, first comment question.
+  Shorts: type short, Amazon link of that product + disclosure in the text.
+- Pushes that change only render.py don't trigger renders; dispatch render.yml with input job=<path> if needed.
