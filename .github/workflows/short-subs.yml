@@ -1,0 +1,31 @@
+name: short-subs
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Path of an already rendered job, e.g. jobs/strongest-animals.json"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  subs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Short subtitles from cached narration
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q requests pillow
+          python render.py --short-subs "${{ github.event.inputs.job }}"
+      - name: Upload to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          slug=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['slug'])" "${{ github.event.inputs.job }}")
+          gh release upload "$slug" out/$slug/*_short_*.srt --clobber

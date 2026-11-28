@@ -14,8 +14,10 @@ Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paul
    - `text_pt` = natural Brazilian Portuguese translation of `text` in every segment (used for the PT subtitle file).
    - Top level `title_pt` (max 100 chars) and `description_pt` = Brazilian Portuguese title/description.
    - `stat` = one short on-screen fact. `shorts` = 3 ranks with the most visual/viral appeal. `thumb_rank` = most iconic animal.
+   - `short_titles` = the 3 exact YouTube titles you will use for the Shorts in Metricool (same order as `shorts`),
+     `short_titles_pt` / `short_descriptions_pt` = their Brazilian Portuguese versions (titles max 100 chars).
 4. Commit and push to `main`. GitHub Actions renders and publishes the release `<slug>` with the MP4, 3 Shorts, thumbnail,
-   `<slug>_en.srt`, `<slug>_pt.srt` and manifest.
+   `<slug>_en.srt`, `<slug>_pt.srt`, `<slug>_short_<n>_en.srt` / `_pt.srt` and manifest.
    Public asset URL: https://github.com/wildranktv-dev/wildrank-pipeline/releases/download/<slug>/<file>
 5. QA before publishing (mandatory): download the MP4, extract one frame per segment into a grid and look at it.
    Every frame must show the labelled animal (or carry the "Illustrative footage" label). Check the manifest tags too.
@@ -26,7 +28,8 @@ Publishing: Metricool connector, brand/blogId 8409914, timezone America/Sao_Paul
    Schedule each Short on a different day at 12:00 or 18:00 local, never two Shorts in the same slot.
 7. Subtitles and pt-BR title: automatic. The `localize` workflow (every 30 min) finds the published video by its exact
    title, uploads `<slug>_pt.srt` / `<slug>_en.srt` and sets the pt-BR title/description via the YouTube API. Keep the
-   Metricool title identical to the job `title`. After publishing, check the localize run log; report failures.
+   Metricool title identical to the job `title`. Shorts get the same treatment, matched by `short_titles`, so the
+   Metricool Short titles must be exactly those strings. After publishing, check the localize run log; report failures.
 8. Tick the topic in `topics.md`, add the publish dates, commit, push.
 
 ## Content rules (monetization)

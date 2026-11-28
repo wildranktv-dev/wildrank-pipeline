@@ -324,7 +324,7 @@ def _ts(t):
     return f"{int(h):02d}:{int(m):02d}:{int(sec):02d},{int(round((sec % 1) * 1000)) % 1000:03d}"
 
 
-def write_srt(segments, timings, field, path):
+def write_srt(segments, timings, field, path, max_t=None):
     """timings: list of (start, audio_duration) per segment. Text chunks are spread by length over the narration."""
     lines, n = [], 1
     for seg, (start, adur) in zip(segments, timings):
@@ -339,10 +339,24 @@ def write_srt(segments, timings, field, path):
             if len(p) > 42:
                 cut = p.rfind(" ", 0, len(p) // 2 + 6)
                 p = p[:cut] + "\n" + p[cut + 1:]
-            lines.append(f"{n}\n{_ts(t)} --> {_ts(t + d - 0.05)}\n{p}\n")
+            if max_t is not None and t >= max_t:
+                break
+            end = t + d - 0.05 if max_t is None else min(t + d - 0.05, max_t)
+            lines.append(f"{n}\n{_ts(t)} --> {_ts(end)}\n{p}\n")
             n += 1
             t += d
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def write_short_subs(job, seg, n, adur, out_dir):
+    """Subtitles for Short n (its audio is the segment narration, capped at 58 s)."""
+    files = []
+    for field, lang in (("text", job.get("lang", "en")), ("text_pt", "pt")):
+        if seg.get(field):
+            sp = out_dir / f"{job['slug']}_short_{n}_{lang}.srt"
+            write_srt([seg], [(0.0, adur)], field, sp, max_t=58.0)
+            files.append(sp.name)
+    return files
 
 
 CARD_BG = (12, 14, 30, 225)
@@ -484,6 +498,7 @@ def main(job_path):
         sp = out_dir / f"{slug}_short_{n}.mp4"
         make_short(seg_files[i], raw_files[i], segments[i], sp, illus_flags[i])
         files.append(sp.name)
+        files += write_short_subs(job, segments[i], n, audio_durs[i], out_dir)
 
     thumb_src = raw_files[next(k for k, s in enumerate(segments) if s.get("rank") == job.get("thumb_rank", 1))]
     thumb = out_dir / f"{slug}_thumb.jpg"
@@ -498,5 +513,30 @@ def main(job_path):
     print(json.dumps(manifest, indent=2))
 
 
+def short_subs_only(job_path):
+    """Build Short subtitle files for an already rendered job from the narration cached in its release."""
+    import hashlib
+    job = json.loads(Path(job_path).read_text())
+    slug = job["slug"]
+    out_dir = Path("out") / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    voice = job.get("voice_id") or DEFAULT_VOICE
+    for n, rank in enumerate(job.get("shorts", []), 1):
+        seg = next(s for s in job["segments"] if s.get("rank") == rank)
+        key = hashlib.md5(f"{voice}|{seg['text']}".encode()).hexdigest()[:16]
+        r = requests.get(f"{REPO_RELEASES}/{slug}/tts_{key}.mp3", timeout=60)
+        if not r.ok:
+            print(f"short {n}: cached narration not found ({r.status_code})")
+            continue
+        mp3 = out_dir / f"tts_{key}.mp3"
+        mp3.write_bytes(r.content)
+        for f in write_short_subs(job, seg, n, duration(mp3), out_dir):
+            print(out_dir / f)
+        mp3.unlink()
+
+
 if __name__ == "__main__":
-    main(sys.argv[1])
+    if sys.argv[1] == "--short-subs":
+        short_subs_only(sys.argv[2])
+    else:
+        main(sys.argv[1])
