@@ -612,5 +612,8 @@
     "rgb lights computer",
     "headset gaming",
     "pc setup"
+  ],
+  "deny_ids": [
+    7090156
   ]
 }

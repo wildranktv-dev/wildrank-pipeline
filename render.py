@@ -103,7 +103,7 @@ def search_clips(query, must=None, n=8):
     r.raise_for_status()
     hits = []
     for h in r.json().get("hits", []):
-        if h["id"] in used_ids and not JOB.get("allow_reuse"):
+        if (h["id"] in used_ids and not JOB.get("allow_reuse")) or h["id"] in JOB.get("deny_ids", []):
             continue
         tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
         if any(t in DENY_TAGS or t in JOB.get("deny", []) for t in tags):
@@ -123,7 +123,7 @@ def search_clips(query, must=None, n=8):
 used_photos = set()
 
 
-def search_photos(query, must=None, n=12):
+def search_photos(query, must=None, n=12, allow_used=False):
     r = request_retry("GET", "https://pixabay.com/api/", params={
         "key": PX_KEY, "q": query, "image_type": "photo", "orientation": "horizontal",
         "per_page": 50, "safesearch": "true", "order": "popular", "min_width": 1600})
@@ -131,7 +131,7 @@ def search_photos(query, must=None, n=12):
         return []
     hits = []
     for h in r.json().get("hits", []):
-        if h["id"] in used_photos:
+        if (h["id"] in used_photos and not allow_used) or h["id"] in JOB.get("deny_ids", []):
             continue
         tags = [t.strip().lower() for t in h.get("tags", "").split(",") if t.strip()]
         if any(t in DENY_TAGS or t in JOB.get("deny", []) for t in tags):
@@ -145,10 +145,15 @@ def search_photos(query, must=None, n=12):
 def get_photos(seg, workdir, count):
     out = []
     queries = seg.get("photo_queries", seg["queries"]) + JOB.get("photo_queries", [])
-    for q in queries:
-        for h in search_photos(q, seg.get("must") or JOB.get("pool_must")):
+    seen = set()
+    for allow_used in (False, True):
+      for q in queries:
+        for h in search_photos(q, seg.get("must") or JOB.get("pool_must"), allow_used=allow_used):
             if len(out) >= count:
                 return out
+            if h["id"] in seen:
+                continue
+            seen.add(h["id"])
             p = workdir / f"img_{h['id']}.jpg"
             if not p.exists():
                 rr = request_retry("GET", h.get("largeImageURL") or h["webformatURL"])
